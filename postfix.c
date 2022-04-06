@@ -11,26 +11,26 @@
 #define MAX_STACK_SIZE 10
 #define MAX_EXPRESSION_SIZE 20
 
-/* stack �댁뿉�� �곗꽑�쒖쐞, lparen = 0 媛��� ��쓬 */
+/* stack 내에서 우선순위, lparen = 0 가장낮음 */
 typedef enum{
-	lparen = 0,  /* ( �쇱そ 愿꾪샇 */
-	rparen = 9,  /* ) �ㅻⅨ履� 愿꾪샇*/
-	times = 7,   /* * 怨깆뀍 */
-	divide = 6,  /* / �섎닓�� */
-	plus = 5,    /* + �㏃뀍 */
-	minus = 4,   /* - 類꾩뀍 */
-	operand = 1 /* �쇱뿰�곗옄 */
+	lparen = 0,  /* ( 왼쪽 괄호 */
+	rparen = 9,  /* ) 오른쪽 괄호*/
+	times = 7,   /* * 곱셈 */
+	divide = 6,  /* / 나눗셈 */
+	plus = 5,    /* + 덧셈 */
+	minus = 4,   /* - 뺄셈 */
+	operand = 1 /* 피연산자 */
 } precedence;
 
-char infixExp[MAX_EXPRESSION_SIZE];   	/* infix expression�� ���ν븯�� 諛곗뿴 */
-char postfixExp[MAX_EXPRESSION_SIZE];	/* postfix濡� 蹂�寃쎈맂 臾몄옄�댁쓣 ���ν븯�� 諛곗뿴 */
-char postfixStack[MAX_STACK_SIZE];	/* postfix濡� 蹂��섏쓣 �꾪빐 �꾩슂�� �ㅽ깮 */
-int evalStack[MAX_STACK_SIZE];		/* 怨꾩궛�� �꾪빐 �꾩슂�� �ㅽ깮 */
+char infixExp[MAX_EXPRESSION_SIZE];   	/* infix expression을 저장하는 배열 */
+char postfixExp[MAX_EXPRESSION_SIZE];	/* postfix로 변경된 문자열을 저장하는 배열 */
+char postfixStack[MAX_STACK_SIZE];	/* postfix로 변경된 문자열을 저장하는 배열 */
+int evalStack[MAX_STACK_SIZE];		/* 계산을위해 필요한 스택 */
 
-int postfixStackTop = -1;  /* postfixStack�� top */
-int evalStackTop = -1;	   /* evalStack�� top */
+int postfixStackTop = -1;  /* postfixStack용 top */
+int evalStackTop = -1;	   /* evalStack용 top */
 
-int evalResult = 0;	   /* 怨꾩궛 寃곌낵瑜� ���� */
+int evalResult = 0;	   /* 계산결과를 저장 */
 
 void postfixpush(char x);
 char postfixPop();
@@ -117,8 +117,8 @@ int evalPop()
 }
 
 /**
- * infix expression�� �낅젰諛쏅뒗��.
- * infixExp�먮뒗 �낅젰�� 媛믪쓣 ���ν븳��.
+ * infix expression을 입력받는다.
+ * infixExp에는 입력된 값을 저장한다.
  */
 void getInfix()
 {
@@ -145,7 +145,7 @@ precedence getPriority(char x)
 }
 
 /**
- * 臾몄옄�섎굹瑜� �꾨떖諛쏆븘, postfixExp�� 異붽�
+ * 문자하나를 전달받아, postfixExp에 추가
  */
 void charCat(char* c)
 {
@@ -156,23 +156,23 @@ void charCat(char* c)
 }
 
 /**
- * infixExp�� 臾몄옄瑜� �섎굹�� �쎌뼱媛�硫댁꽌 stack�� �댁슜�섏뿬 postfix濡� 蹂�寃쏀븳��.
- * 蹂�寃쎈맂 postfix�� postFixExp�� ���λ맂��.
+ * infixExp의 문자를 하나씩 읽어가면서 stack을 이용하여 postfix로 변경한다.
+ * 변경된 postfix는 postFixExp에 저장한다.
  */
 void toPostfix()
 {
-	/* infixExp�� 臾몄옄 �섎굹�⑹쓣 �쎄린�꾪븳 �ъ씤�� */
+	/* infixExp의 문자 하나씩을 읽기위한 포인터 */
 	char *exp = infixExp;
-	char x; /* 臾몄옄�섎굹瑜� �꾩떆濡� ���ν븯湲� �꾪븳 蹂��� */
+	char x; /* 문자하나를 임시로 저장하기 위한 변수 */
 
-	/* exp瑜� 利앷��쒖폒媛�硫댁꽌, 臾몄옄瑜� �쎄퀬 postfix濡� 蹂�寃� */
+	/* exp를 증가시켜가면서,문자를 읽고 postfix로 변경 */
 	while(*exp != '\0')
 	{
-		/* �꾩슂�� 濡쒖쭅 �꾩꽦 */
+		/* 필요한 로직 완성 */
 
 	}
 
-	/* �꾩슂�� 濡쒖쭅 �꾩꽦 */
+	/* 필요한 로직 완성 */
 
 }
 void debug()
@@ -205,5 +205,5 @@ void reset()
 
 void evaluation()
 {
-	/* postfixExp, evalStack�� �댁슜�� 怨꾩궛 */
+	/* postfixExp, evalStack을 이용한 계산 */
 }
