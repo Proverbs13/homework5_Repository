@@ -1,34 +1,29 @@
-/* circularQ.c
- *
- *  Data Structures, Homework #5
- *  Department of Computer Science at Chungbuk National University
- */
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX_QUEUE_SIZE 4 //íì˜ ì‚¬ì´ì¦ˆ, ì›í˜•íì—ì„  3ê°œê³µê°„ ê°€ëŠ¥
+#define MAX_QUEUE_SIZE 4 //Å¥ÀÇ »çÀÌÁî, ¿øÇüÅ¥¿¡¼± 3°³°ø°£ °¡´É
 
-typedef char element; //ìë£Œí˜• charì˜ ë³„ëª…ì„ elementë¡œ ì„¤ì •
+typedef char element; //ÀÚ·áÇü charÀÇ º°¸íÀ» element·Î ¼³Á¤
 typedef struct {
-	element queue[MAX_QUEUE_SIZE]; // êµ¬ì¡°ì²´ ë‚´ ë¬¸ìì—´ queue ì„ ì–¸
+	element queue[MAX_QUEUE_SIZE]; // ±¸Á¶Ã¼ ³» ¹®ÀÚ¿­ queue ¼±¾ğ
 	int front, rear;
-}QueueType;  //QueueType ìë£Œí˜• êµ¬ì¡°ì²´ ì„ ì–¸
+}QueueType;  //QueueType ÀÚ·áÇü ±¸Á¶Ã¼ ¼±¾ğ
 
-QueueType* createQueue();    // í ìƒì„± í•¨ìˆ˜+ë™ì  í• ë‹¹
-int freeQueue(QueueType* cQ);// íì˜ ë™ì ë©”ëª¨ë¦¬ í•´ì œ í•¨ìˆ˜
-int isEmpty(QueueType* cQ);  // íê°€ ê½‰ì°¼ëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
-int isFull(QueueType* cQ);   // íê°€ ë¹„ì—ˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
-void enQueue(QueueType* cQ, element item); //íì˜ ì›ì†Œë¥¼ ì‚½ì…í•˜ëŠ” í•¨ìˆ˜
-void deQueue(QueueType* cQ, element* item);//íì˜ ì›ì†Œë¥¼ ì‚­ì œí•˜ëŠ” í•¨ìˆ˜ 
-void printQ(QueueType* cQ);  // íì˜ ë‚´ìš© ì¶œë ¥í•¨ìˆ˜
-void debugQ(QueueType* cQ);  // íì˜ ì„¸ë¶€ë‚´ìš© ì¶œë ¥í•¨ìˆ˜
-element getElement();        // ì…ë ¥í•  ì›ì†Œë¥¼ ë°›ëŠ” í•¨ìˆ˜
+QueueType* createQueue();    // Å¥ »ı¼º ÇÔ¼ö+µ¿Àû ÇÒ´ç
+int freeQueue(QueueType* cQ);// Å¥ÀÇ µ¿Àû¸Ş¸ğ¸® ÇØÁ¦ ÇÔ¼ö
+int isEmpty(QueueType* cQ);  // Å¥°¡ ²ËÃ¡´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö
+int isFull(QueueType* cQ);   // Å¥°¡ ºñ¾ú´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö
+void enQueue(QueueType* cQ, element item); //Å¥ÀÇ ¿ø¼Ò¸¦ »ğÀÔÇÏ´Â ÇÔ¼ö
+void deQueue(QueueType* cQ, element* item);//Å¥ÀÇ ¿ø¼Ò¸¦ »èÁ¦ÇÏ´Â ÇÔ¼ö 
+void printQ(QueueType* cQ);  // Å¥ÀÇ ³»¿ë Ãâ·ÂÇÔ¼ö
+void debugQ(QueueType* cQ);  // Å¥ÀÇ ¼¼ºÎ³»¿ë Ãâ·ÂÇÔ¼ö
+element getElement();        // ÀÔ·ÂÇÒ ¿ø¼Ò¸¦ ¹Ş´Â ÇÔ¼ö
 
 int main(void)
 {
-	printf("[----- [ì´ì°¬] [2019038029] -----]\n");
-	QueueType* cQ = createQueue(); //QueueTypeí˜• í¬ì¸í„° cQ ì„ ì–¸í›„, íìƒì„±í•¨ìˆ˜ í˜¸ì¶œí•´ ë™ì í• ë‹¹ ë° ë‚´ë¶€ ê°’ ì´ˆê¸°í™”
-	element data; // ì‚¬ìš©ìê°€ íì— ì…ë ¥í•  ì›ì†Œ-ë°ì´í„°
-	char command; // ì‚¬ìš©ì˜ ëª…ë ¹-ì»¤ë§¨ë“œ
+	printf("[----- [ÀÌÂù] [2019038029] -----]\n");
+	QueueType* cQ = createQueue(); //QueueTypeÇü Æ÷ÀÎÅÍ cQ ¼±¾ğÈÄ, Å¥»ı¼ºÇÔ¼ö È£ÃâÇØ µ¿ÀûÇÒ´ç ¹× ³»ºÎ °ª ÃÊ±âÈ­
+	element data; // »ç¿ëÀÚ°¡ Å¥¿¡ ÀÔ·ÂÇÒ ¿ø¼Ò-µ¥ÀÌÅÍ
+	char command; // »ç¿ëÀÇ ¸í·É-Ä¿¸Çµå
 
 	do {
 		printf("\n-----------------------------------------------------\n");
@@ -38,132 +33,126 @@ int main(void)
 		printf("------------------------------------------------------\n");
 
 		printf("Command = ");
-		scanf(" %c", &command); //ì‚¬ìš©ìì˜ ëª…ë ¹ ì…ë ¥
+		scanf(" %c", &command); //»ç¿ëÀÚÀÇ ¸í·É ÀÔ·Â
 
 		switch (command) {
 		case 'i': case 'I': 
-			data = getElement(); // í•¨ìˆ˜í˜¸ì¶œí•´ íì— ì§‘ì–´ë„£ì„ ë°ì´í„° ê°’ ë°›ì•„ì˜´
-			enQueue(cQ, data);   // í ì›ì†Œ ì‚½ì… í•¨ìˆ˜ í˜¸ì¶œ
-			break;               // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ
+			data = getElement(); // ÇÔ¼öÈ£ÃâÇØ Å¥¿¡ Áı¾î³ÖÀ» µ¥ÀÌÅÍ °ª ¹Ş¾Æ¿È
+			enQueue(cQ, data);   // Å¥ ¿ø¼Ò »ğÀÔ ÇÔ¼ö È£Ãâ
+			break;               // ½ºÀ§Ä¡¹® Å»Ãâ
 		case 'd': case 'D':
-			deQueue(cQ, &data);  // í ì›ì†Œ ì‚­ì œí•¨ìˆ˜ í˜¸ì¶œ
-			break;				 // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ
+			deQueue(cQ, &data);  // Å¥ ¿ø¼Ò »èÁ¦ÇÔ¼ö È£Ãâ
+			printf("%c",cQ->queue[data]);
+			break;				 // ½ºÀ§Ä¡¹® Å»Ãâ
 		case 'p': case 'P':
-			printQ(cQ);          // í ì¶œë ¥í•¨ìˆ˜ í˜¸ì¶œ
-			break;				 // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ
+			printQ(cQ);          // Å¥ Ãâ·ÂÇÔ¼ö È£Ãâ
+			break;				 // ½ºÀ§Ä¡¹® Å»Ãâ
 		case 'b': case 'B':      
-			debugQ(cQ);          // í ì„¸ë¶€ì •ë³´ ì¶œë ¥í•¨ìˆ˜ í˜¸ì¶œ
-			break;				 // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ
+			debugQ(cQ);          // Å¥ ¼¼ºÎÁ¤º¸ Ãâ·ÂÇÔ¼ö È£Ãâ
+			break;				 // ½ºÀ§Ä¡¹® Å»Ãâ
 		case 'q': case 'Q':
-			freeQueue(cQ);       // íì˜ ë™ì  ë©”ëª¨ë¦¬ í•´ì œ í•¨ìˆ˜ í˜¸ì¶œ
-			break;				 // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ -> ë°˜ë³µë¬¸ ì¡°ê±´ì— ë”°ë¼ ë°˜ë³µë¬¸ ì¢…ë£Œ
-		default:    //ì¡°ê±´ ì™¸ ë‹¤ë¥¸ ê²ƒ ì…ë ¥ ì‹œ
+			freeQueue(cQ);       // Å¥ÀÇ µ¿Àû ¸Ş¸ğ¸® ÇØÁ¦ ÇÔ¼ö È£Ãâ
+			break;				 // ½ºÀ§Ä¡¹® Å»Ãâ -> ¹İº¹¹® Á¶°Ç¿¡ µû¶ó ¹İº¹¹® Á¾·á
+		default:    //Á¶°Ç ¿Ü ´Ù¸¥ °Í ÀÔ·Â ½Ã
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
-			break;  // ìŠ¤ìœ„ì¹˜ë¬¸ íƒˆì¶œ
+			break;  // ½ºÀ§Ä¡¹® Å»Ãâ
 		}
-	} while (command != 'q' && command != 'Q'); //q ì…ë ¥ì‹œ ê¹Œì§€ ë°˜ë³µë¬¸ ì‹¤í–‰
-	return 1;// ë©”ì¸í•¨ìˆ˜ ì¢…ë£Œ
+	} while (command != 'q' && command != 'Q'); //q ÀÔ·Â½Ã ±îÁö ¹İº¹¹® ½ÇÇà
+	return 1;// ¸ŞÀÎÇÔ¼ö Á¾·á
 }
-
 QueueType* createQueue()
 {
-	QueueType* cQ; // QueueTypeí˜• í¬ì¸í„° cQ ì„ ì–¸
-	cQ = (QueueType*)malloc(sizeof(QueueType)); //QueueTypeêµ¬ì¡°ì²´ í¬ì¸í„° cQê°€ ê°€ë¦¬í‚¤ëŠ” ê³µê°„ ë™ì  ë©”ëª¨ë¦¬ í• ë‹¹
-	cQ->front = 0; //íì— ì‚¬ìš©í•  front ì´ˆê¸°í™” 
-	cQ->rear = 0;  //íì— ì‚¬ìš©í•  rear ì´ˆê¸°í™”
-	return cQ;     // cQ ë°˜í™˜
+	QueueType* cQ; // QueueTypeÇü Æ÷ÀÎÅÍ cQ ¼±¾ğ
+	cQ = (QueueType*)malloc(sizeof(QueueType)); //QueueType±¸Á¶Ã¼ Æ÷ÀÎÅÍ cQ°¡ °¡¸®Å°´Â °ø°£ µ¿Àû ¸Ş¸ğ¸® ÇÒ´ç
+	cQ->front = 0; //Å¥¿¡ »ç¿ëÇÒ front ÃÊ±âÈ­ 
+	cQ->rear = 0;  //Å¥¿¡ »ç¿ëÇÒ rear ÃÊ±âÈ­
+	return cQ;     // cQ ¹İÈ¯
 }
-
 int freeQueue(QueueType* cQ) 
 {
-	if (cQ == NULL) return 1; // cqê°€ ì•„ë¬´ê²ƒë„ ê°€ë¦¬í‚¤ì§€ì•ŠëŠ”ë‹¤ë©´ í•¨ìˆ˜ ë°”ë¡œì¢…ë£Œ
-	free(cQ); // cQê°€ ê°€ë¦¬í‚¤ëŠ” ê³µê°„ì˜ ë™ì ë©”ëª¨ë¦¬ í•´ì œ
-	return 1; //í•¨ìˆ˜ì¢…ë£Œ
+	if (cQ == NULL) return 1; // cq°¡ ¾Æ¹«°Íµµ °¡¸®Å°Áö¾Ê´Â´Ù¸é ÇÔ¼ö ¹Ù·ÎÁ¾·á
+	free(cQ); // cQ°¡ °¡¸®Å°´Â °ø°£ÀÇ µ¿Àû¸Ş¸ğ¸® ÇØÁ¦
+	return 1; //ÇÔ¼öÁ¾·á
 }
-
 element getElement()
 {
-	element item; //charí˜• ë³€ìˆ˜ item
+	element item; //charÇü º¯¼ö item
 	printf("Input element = ");
 	scanf(" %c", &item);
-	return item; //ì…ë ¥ ë°›ì•„ item ë°˜í™˜
+	return item; //ÀÔ·Â ¹Ş¾Æ item ¹İÈ¯
 }
-
 int isEmpty(QueueType* cQ)
 {
-	if (cQ->front == cQ->rear) { //ë§Œì¼ íê°€ ë¹„ì–´ìˆì–´ í˜„ì¬ìƒíƒœì—ì„œ  frontì™€ rear ê°€ ê°™ë‹¤ë©´
-		return 1; // 1 ë°˜í™˜í•˜ë©° í•¨ìˆ˜ì¢…ë£Œ
+	if (cQ->front == cQ->rear) { //¸¸ÀÏ Å¥°¡ ºñ¾îÀÖ¾î ÇöÀç»óÅÂ¿¡¼­  front¿Í rear °¡ °°´Ù¸é
+		printf("Circular Queue is empty!"); 
+		return 1; // 1 ¹İÈ¯ÇÏ¸ç ÇÔ¼öÁ¾·á
 	}
-	return 0; // ì•„ë‹ˆë¼ë©´ 0ë°˜í™˜í•˜ë©° í•¨ìˆ˜ì¢…ë£Œ
+	else
+		return 0; // ¾Æ´Ï¶ó¸é 0¹İÈ¯ÇÏ¸ç ÇÔ¼öÁ¾·á
 }
-
 int isFull(QueueType* cQ)
 {
-	cQ->rear = ((cQ->rear) + 1) % MAX_QUEUE_SIZE; //modulo ì—°ì‚°ì„ ì´ìš©í•´ íì˜ rear 1ì¹¸ ì´ë™ì‹œí‚´
-	if (cQ->front == cQ->rear) { //ë§Œì¼ 1ì¹¸ ì´ë™ì‹œí‚¨ rearê°€ frontì™€ ê°™ë‹¤ë©´
-		//1ì¹¸ ì´ë™ ì·¨ì†Œí›„ í•¨ìˆ˜ì¢…ë£Œ
-		if (cQ->rear == 0) //1ì¹¸ ì´ë™í•œ rearê°€ 0 ì´ë¼ë©´(ì´ë™ ì „ì˜ rearëŠ” (ìµœëŒ€ íí¬ê¸°-1))
+	cQ->rear = ((cQ->rear) + 1) % MAX_QUEUE_SIZE; //modulo ¿¬»êÀ» ÀÌ¿ëÇØ Å¥ÀÇ rear 1Ä­ ÀÌµ¿½ÃÅ´
+	if (cQ->front == cQ->rear) { //¸¸ÀÏ 1Ä­ ÀÌµ¿½ÃÅ² rear°¡ front¿Í °°´Ù¸é
+		//1Ä­ ÀÌµ¿ Ãë¼ÒÈÄ ÇÔ¼ö°¡ °¡µæÃ¡À½À» ¾Ë¸®°í ÇÔ¼öÁ¾·á
+		if (cQ->rear == 0) //1Ä­ ÀÌµ¿ÇÑ rear°¡ 0 ÀÌ¶ó¸é(ÀÌµ¿ ÀüÀÇ rear´Â (ÃÖ´ë Å¥Å©±â-1))
 			cQ->rear = MAX_QUEUE_SIZE - 1;
 		else
-			cQ->rear--; // ê·¸ ì™¸ ê²½ìš° ëŠ” 1ì”© ë¹¼ì¤Œ
-		return 1; //1 ë°˜í™˜í•˜ë©° í•¨ìˆ˜ì¢…ë£Œ
+			cQ->rear--; // ±× ¿Ü °æ¿ì ´Â 1¾¿ »©ÁÜ
+		printf("Circular Queue is full!"); 
+		return 1; //1 ¹İÈ¯ÇÏ¸ç ÇÔ¼öÁ¾·á
 	}
-	return 0; //ì´ë™ì‹œí‚¨rear != front ì¼ì‹œ 0ë°˜í™˜
+	else
+		return 0; //ÀÌµ¿½ÃÅ²rear != front ÀÏ¶§ 0¹İÈ¯
 }
-
 void enQueue(QueueType* cQ, element item)
 {
-	
-	if (isFull(cQ)) { //í•¨ìˆ˜ í˜¸ì¶œí•´ íê°€ ê°€ë“ì°¼ëŠ”ì§€ í™•ì¸
-	//ê°€ë“ ì°¼ë‹¤ë©´ 1 ë°˜í™˜ë˜ì–´ ë°”ë¡œ ì•„ë˜ë¬¸ì¥ ì‹¤í–‰
-		printf("Circular Queue is full!"); 
-		return ; //í•¨ìˆ˜ì¢…ë£Œ
+	if (isFull(cQ)) { //ÇÔ¼ö È£ÃâÇØ Å¥°¡ °¡µæÃ¡´ÂÁö È®ÀÎ
+	//°¡µæ Ã¡´Ù¸é 1 ¹İÈ¯µÇ¾î ¹Ù·Î ¾Æ·¡¹®Àå ½ÇÇà
+		return ; //ÇÔ¼öÁ¾·á
 	}
-	cQ->queue[cQ->rear] = item; //íì˜ ê³µê°„ì´ ë‚¨ì•„ìˆì„ ë•Œ íì˜ ë‹¤ìŒì¹¸ì— ë°›ì•„ì˜¨ itemê°’ ë„£ì–´ì¤Œ
-	return ;//í•¨ìˆ˜ì¢…ë£Œ
+	cQ->queue[cQ->rear] = item; //Å¥ÀÇ °ø°£ÀÌ ³²¾ÆÀÖÀ» ¶§ ÀÌµ¿ÇÑ rear ºÎºĞ¿¡ ÀÔ·ÂµÈ °ª ÃÊ±âÈ­
+	return ;//ÇÔ¼öÁ¾·á
 }
-
 void deQueue(QueueType* cQ, element* item)
 {
-	if (isEmpty(cQ)) { //í•¨ìˆ˜ í˜¸ì¶œí•´ íê°€ ë¹„ì–´ìˆëŠ”ì§€ í™•ì¸
-	//ë¹„ì–´ìˆë‹¤ë©´ 1 ë°˜í™˜ë˜ì–´ ë°”ë¡œ ì•„ë˜ë¬¸ì¥ ì‹¤í–‰, 
-		printf("Circular Queue is empty!");
-		return ;//í•¨ìˆ˜ì¢…ë£Œ
-	}
-	cQ->front = ((cQ->front) + 1) % MAX_QUEUE_SIZE; //íê°€ ë¹„ì–´ìˆì§€ ì•Šë‹¤ë©´ front 1ì¹¸ ì¦ê°€(ì´ë™)
-	// ì¦ê°€ì „ frontìœ„ì¹˜ì˜ ê°’ ìì²´ë¥¼ ì‚­ì œí•˜ì§€ëŠ” ì•ŠìŒ
-	return ; // í•¨ìˆ˜ì¢…ë£Œ
+	if (isEmpty(cQ)) //ÇÔ¼ö È£ÃâÇØ Å¥°¡ ºñ¾îÀÖ´ÂÁö È®ÀÎ
+	//ºñ¾îÀÖ´Ù¸é 1 ¹İÈ¯µÇ¾î ¹Ù·Î ¾Æ·¡¹®Àå ½ÇÇà -> ÇÔ¼öÁ¾·á
+		return ;//ÇÔ¼öÁ¾·á
+	
+	cQ->front = ((cQ->front) + 1) % MAX_QUEUE_SIZE; //Å¥°¡ ºñ¾îÀÖÁö ¾Ê´Ù¸é front 1Ä­ Áõ°¡(ÀÌµ¿)
+	//*item = cQ->queue[cQ->front];  = Áõ°¡ÇÑ frontÀ§Ä¡ÀÇ Å¥ °ªÀ» »ç¿ëÀÚÀÇ ¸í·ÉÀÌ µé¾î°¡´Â *item (data)¿¡ ÃÊ±âÈ­
+	//  ¤¤ ¼Ö·ç¼Ç¿¡¼­ ÂüÁ¶ÇÑ À§ÀÇ ÇÑÁÙÀÇ ÄÚµå´Â ¿øÇü Å¥ ±¸Çö¿¡ ÀÖ¾î¼­ ¾î¶² ¿ëµµÀÎÁö ÀÌÇØÇÏÁö ¸øÇØ ÁÖ¼®Ã³¸®ÇÏ¿´´Ù.
+	return; // ÇÔ¼öÁ¾·á
 }
-
 void printQ(QueueType* cQ)
 {
 	int i, first, last; 
 
-	first = (cQ->front + 1) % MAX_QUEUE_SIZE; //firstëŠ” front ë‹¤ìŒì¹¸
-	last = (cQ->rear + 1) % MAX_QUEUE_SIZE;   //lastëŠ” rear ë‹¤ìŒì¹¸
+	first = (cQ->front + 1) % MAX_QUEUE_SIZE; //first´Â front ´ÙÀ½Ä­
+	last = (cQ->rear + 1) % MAX_QUEUE_SIZE;   //last´Â rear ´ÙÀ½Ä­
 
 	printf("Circular Queue : [");
 	i = first;
-	while (i != last) {
-	// frontìœ„ì¹˜ì˜ íëŠ” ì–´ì§œí”¼ ë¹„ì–´ìˆìœ¼ë¯€ë¡œ ê·¸ ë‹¤ìŒì¹¸ë¶€í„° rear ìœ„ì¹˜ê¹Œì§€ ì¶œë ¥í›„ ê·¸ ë‹¤ìŒì¹¸ì—ì„œ ë°˜ë³µë¬¸ ì¢…ë£Œ 
+	while (i != last) {//¿øÇü Å¥¿¡¼­´Â frontÀ§Ä¡ Ä­Àº ºñ¿ö³õ±â ¶§¹®¿¡
+	// ±× ´ÙÀ½Ä­ºÎÅÍ rear À§Ä¡±îÁö Ãâ·ÂÈÄ ±× ´ÙÀ½Ä­¿¡¼­ ¹İº¹¹® Á¾·á 
 		printf("%3c", cQ->queue[i]);
-		i = (i + 1) % MAX_QUEUE_SIZE; //modulo ì—°ì‚°ìœ¼ë¡œ ë°°ì—´ ìµœëŒ€ìœ„ì¹˜ ë‹¤ìŒì¹¸ = 0ìœ¼ë¡œ ê³„ì‚°ë¨
+		i = (i + 1) % MAX_QUEUE_SIZE; //modulo ¿¬»êÀ¸·Î ¹è¿­ ÃÖ´ëÀ§Ä¡ ´ÙÀ½Ä­ = 0À¸·Î °è»êµÊ
 	}
 	printf(" ]\n");
 }
-
 void debugQ(QueueType* cQ)
 {
-	//êµ¬ì¡°ì²´ ë‚´ë¶€ queue ë°°ì—´ì— ì‹¤ì œë¡œ ë“¤ì–´ê°€ ìˆëŠ” ë‚´ìš© ì¶œë ¥
+	//±¸Á¶Ã¼ ³»ºÎ queue ¹è¿­¿¡ ½ÇÁ¦·Î µé¾î°¡ ÀÖ´Â ³»¿ë Ãâ·Â
 	printf("\n---DEBUG\n");
 	for (int i = 0; i < MAX_QUEUE_SIZE; i++) 
-	{   //i =0 ë¶€í„° ì¶œë ¥í•˜ë‹¤ frontìœ„ì¹˜ ë‚˜ì˜¤ë©´ frontë¡œ ì¶œë ¥
-		if (i == cQ->front) { //
+	{   //i =0 ºÎÅÍ Ãâ·ÂÇÏ´Ù frontÀ§Ä¡ ³ª¿À¸é front·Î Ãâ·Â
+		if (i == cQ->front) { 
 			printf("  [%d] = front\n", i);
-			continue; //ì•„ë˜ ë¼ì¸ ë°°ì œ, ë°˜ë³µë¬¸ ì‹¤í–‰
+			continue; //¾Æ·¡ ¶óÀÎ ¹èÁ¦, ¹İº¹¹® ½ÇÇà
 		}
 		printf("  [%d] = %c\n", i, cQ->queue[i]);
 	}
-	printf("front = %d, rear = %d\n", cQ->front, cQ->rear); //í˜„ì¬ front, rear ì¶œë ¥
+	printf("front = %d, rear = %d\n", cQ->front, cQ->rear); //ÇöÀç front, rear Ãâ·Â
 }
 
