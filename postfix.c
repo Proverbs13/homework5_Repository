@@ -1,13 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-
 #define MAX_STACK_SIZE 10 //최대 스택사이즈 10
-#define MAX_EXPRESSION_SIZE 20
+#define MAX_EXPRESSION_SIZE 20 //최대 문자열 크기 20 
 
-/* stack 내에서 우선순위, lparen = 0 가장 낮음 */
-typedef enum{
-	lparen,  /* ( 왼쪽 괄호 */
+typedef enum{ // 스택안과 스택 바깥에서의 우선순위 지정을 위해 따로 초기화 x
+	lparen,  /* ( 왼쪽 괄호 */   //0부터 시작해서 1 만큼씩 올라감 
 	rparen,  /* ) 오른쪽 괄호*/
 	times,   /* * 곱셈 */
 	divide,  /* / 나눗셈 */
@@ -16,9 +14,10 @@ typedef enum{
 	operand  /* 피연산자 */
 } precedence;
 
-static int isp[]={0,9,7,7,5,5,1};
-static int icp[]={10,9,7,7,5,5,1};
-
+static int isp[]={0,9,7,7,5,5,1};  //스택내부에서의 우선순위
+static int icp[]={10,9,7,7,5,5,1}; //스택외부에서의 우선순위
+// '(' 가 스택에 들어올때는 높은 우선순위로 바로 들어오지만
+//스택 내부에서는 낮은 우선순위로 다른 연산자들이 스택에 쌓일 수 있게 됨
 
 char infixExp[MAX_EXPRESSION_SIZE];   	/* infix expression을 저장하는 문자열 */
 char postfixExp[MAX_EXPRESSION_SIZE];	/* postfix로 변경된 문자열을 저장하는 문자열 */
@@ -41,6 +40,7 @@ void toPostfix();      //중위표기식->후위표기식 변환 함수
 void debug();          //입력&계산결과의 세부내용 출력
 void reset();          //입력된 정보 초기화 함수
 void evaluation();     //후위표기식을 계산하는 함수
+
 int main()
 {
 	char command; //사용자가 입력할 명령
@@ -76,12 +76,8 @@ int main()
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
 			break;
 		}
-
 	}while(command != 'q' && command != 'Q');
-
 	return 1;
-
-
 }
 
 void postfixPush(char x)
@@ -113,10 +109,6 @@ int evalPop()
         return evalStack[evalStackTop--];
 } //뽑아내는 위치의 값 리턴 / top를 한칸내림 
 
-/*
- * infix expression을 입력받는다.
- * infixExp에는 입력된 값을 저장한다.
- */
 void getInfix()
 {
     printf("Type the expression >>> "); 
@@ -141,10 +133,7 @@ precedence getPriority(char x)
 	return getToken(x); 
 }  
 
-/*
- * 문자하나를 전달받아, postfixExp에 추가
- */
-void charCat(char* c)
+void charCat(char* c) //문자하나를 전달받아, 후위표기식에 추가
 {
 	if (postfixExp == '\0') //후위표기식 배열 비어있을때 = 처음으로 들어올때
 		strncpy(postfixExp, c, 1); //들어온 문자 한칸 복사해옴
@@ -152,10 +141,6 @@ void charCat(char* c)
 		strncat(postfixExp, c, 1); //들어있는 문자열에 추가
 }
 
-/**
- * infixExp의 문자를 하나씩 읽어가면서 stack을 이용하여 postfix로 변경한다.
- * 변경된 postfix는 postFixExp에 저장된다.
- */
 void toPostfix()
 {
 	/* infixExp의 문자 하나씩을 읽기위한 포인터 */
@@ -164,34 +149,34 @@ void toPostfix()
 
 	/* exp를 증가시켜가면서, 문자를 읽고 postfix로 변경 */
 	while(*exp != '\0')
-	{
-		if(getPriority(*exp) == operand)
+	{   // 중위표기식 문자열 에서 문자 가져와 비교
+		if(getPriority(*exp) == operand) // 숫자이면
 		{
-			x = *exp;
-        	charCat(&x);
+			x = *exp; 
+        	charCat(&x); //바로 후위표기식 문자열에 넣어줌
 		}
 
-        else if(getPriority(*exp) == rparen)
+        else if(getPriority(*exp) == rparen) // ')' 이면
         {
-        	while((x = postfixPop()) != '(') {
-        		charCat(&x);
-        	}
+        	while((x = postfixPop()) != '(') { //스택에서 팝을 해서 나오는 것이 '('가 될 때까지
+        		charCat(&x); //나오는 문자를 후위표기식 문자열에 넣어줌
+        	}// '(' 가 팝되지만 후위표기식에 문자가 들어가지는 않으면서 반복문 종료
         }
-        else
-        {
-            while(isp[getPriority(postfixStack[postfixStackTop])] >=  icp[ getPriority(*exp) ] )
-            {   //현재 탑에있는 부호우선순위가 새로들어온 녀석의 우선순위보다 크거나 작을때까지
-            	x = postfixPop();
-            	charCat(&x);
+        else //나머지경우
+        {   // 스택 안과 바깥에서의 우선순위를 다르게 설정해 '(' 가 들어올때 복잡함을 해결
+            while( isp[ getPriority(postfixStack[postfixStackTop]) ] >=  icp[ getPriority(*exp) ] )
+            {   //현재 스택안의 탑에있는 것의 우선순위가 들어온 문자의 우선순위보다 크거나 같다면, 작아질때까지 반복
+            	x = postfixPop();//팝 실행 
+            	charCat(&x);     //후위표기식 문자열에 넣어줌
             }
-            postfixPush(*exp);
+            postfixPush(*exp); //들어온 문자를 스택에 푸시 - else 조건에선 모두 실행됨
         }
-        exp++;
+        exp++; //중위표기식 문자열 다음위치로 이동, 위의 조건에서 마지막 널문자 나올때까지 반복
 	}
-    while(postfixStackTop != -1)
-    {
+    while(postfixStackTop != -1) //후위표기식에 붙여줘야하는 스택에 남아있는 문자가 있을 수 있기때문에
+    {                            // 스택이 비워질때까지
     	x = postfixPop();
-    	charCat(&x);
+    	charCat(&x);     //남은 스택의 문자들 후위표기식에 붙여줌
     }
 }
 void debug()
@@ -223,22 +208,22 @@ void reset()
 void evaluation()
 {
 	/* postfixExp, evalStack을 이용한 계산 */
-	int opr1, opr2, i;
+	int opr1, opr2, i;               //피연산자 변수 2개 , 반복문용 i
+	int len = strlen(postfixExp); // 완성된 후위표기식 길이 확인
+	char symbol;        //후위표기식 문자하나를 보내줄 변수
+	evalStackTop = -1;  // 계산용 스택 탑 초기화
 
-	int length = strlen(postfixExp);
-	char symbol;
-	evalStackTop = -1;
-
-	for(i = 0; i < length; i++)
+	for(i = 0; i < len; i++) //후위연산식 길이 동안 반복
 	{
-		symbol = postfixExp[i];
-		if(getToken(symbol) == operand) {
-			evalPush(symbol - '0');
+		symbol = postfixExp[i]; //한문자 씩 후위표기식 문자열에서 뽑아냄
+		if(getToken(symbol) == operand) { // 피연산자 일시 
+			evalPush(symbol - '0');   // 계산용 스택에 푸시
+			// 문자 계산이므로 문자에서 아스키문자값 47 ='0'을 빼면 원하는 숫자를 얻음
 		}
-		else {
-			opr2 = evalPop();
-			opr1 = evalPop();
-			switch(getToken(symbol)) {
+		else { //연산자가 나오면 계산할 피연산자 두개 필요
+			opr2 = evalPop(); // 스택에 나중에 쌓인 숫자 먼저 팝
+			opr1 = evalPop(); // 먼저 쌓여있던 숫자 팝
+			switch(getToken(symbol)) { //연산자에 따라 다른 계산결과를 계산용스택에 다시 push
 			case plus: evalPush(opr1 + opr2); break;
 			case minus: evalPush(opr1 - opr2); break;
 			case times: evalPush(opr1 * opr2); break;
@@ -247,7 +232,5 @@ void evaluation()
 			}
 		}
 	}
-	evalResult = evalPop();
-	
+	evalResult = evalPop(); //스택에들어있던 마지막으로 계산된 결과를 팝해서 최종결과에 대입
 }
-
